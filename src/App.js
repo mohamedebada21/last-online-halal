@@ -40,13 +40,14 @@ function App() {
         fetchProducts();
     }, []);
 
-    // Fetch user's orders when they log in
+    // Fetch orders when a user logs in
     useEffect(() => {
         const fetchOrders = async () => {
             if (currentUser) {
                 try {
-                    // In a real app, you'd protect this route and get user ID from the token on the backend
-                    const response = await fetch(`${API_URL}/orders/${currentUser.id}`);
+                    // If the user is an admin, fetch all orders. Otherwise, fetch only their own.
+                    const endpoint = currentUser.isAdmin ? `${API_URL}/orders` : `${API_URL}/orders/${currentUser.id}`;
+                    const response = await fetch(endpoint);
                     if (!response.ok) throw new Error('Could not fetch orders.');
                     const data = await response.json();
                     setOrders(data);
