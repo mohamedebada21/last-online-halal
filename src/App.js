@@ -135,6 +135,12 @@ function App() {
         setView('shop');
         // NOTE: This is where you would make a fetch call to your backend to trigger the admin email.
         // fetch('/api/new-order', { method: 'POST', body: JSON.stringify({ orderDetails: newOrder }) });
+        // NOTE: This is where you make a fetch call to your backend to trigger the admin email.
+        fetch('http://localhost:5001/api/new-order', { 
+    method: 'POST', 
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ orderDetails: newOrder }) 
+            });
     };
 
     const handleLogin = ({ email, password }) => {
