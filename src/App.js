@@ -24,6 +24,7 @@ function App() {
     const [checkoutTotal, setCheckoutTotal] = useState(0);
     const [notification, setNotification] = useState('');
 
+    // Fetch initial products from the backend when the app loads
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -38,6 +39,28 @@ function App() {
         };
         fetchProducts();
     }, []);
+
+    // Fetch user's orders when they log in
+    useEffect(() => {
+        const fetchOrders = async () => {
+            if (currentUser) {
+                try {
+                    // In a real app, you'd protect this route and get user ID from the token on the backend
+                    const response = await fetch(`${API_URL}/orders/${currentUser.id}`);
+                    if (!response.ok) throw new Error('Could not fetch orders.');
+                    const data = await response.json();
+                    setOrders(data);
+                } catch (error) {
+                    console.error("Failed to fetch orders:", error);
+                    setNotification(error.message);
+                }
+            } else {
+                setOrders([]); // Clear orders on logout
+            }
+        };
+
+        fetchOrders();
+    }, [currentUser]); // Re-run this effect when the user logs in or out
 
     useEffect(() => {
         if (notification) {
@@ -57,18 +80,48 @@ function App() {
     };
 
     const handleAddToCart = (productToAdd) => {
-        // This logic remains on the frontend
-        // ... (same as before)
+        const productInStock = products.find(p => p._id === productToAdd._id);
+        if (!productInStock || productInStock.stock <= 0) {
+            setNotification('This item is out of stock.');
+            return;
+        }
+        setCartItems(prevItems => {
+            const itemInCart = prevItems.find(item => item._id === productToAdd._id);
+            if (itemInCart) {
+                if (itemInCart.quantity >= productInStock.stock) {
+                    setNotification('Cannot add more than available stock.');
+                    return prevItems;
+                }
+                return prevItems.map(item =>
+                    item._id === productToAdd._id ? { ...item, quantity: item.quantity + 1 } : item
+                );
+            }
+            setNotification(`${productToAdd.name} added to cart!`);
+            return [...prevItems, { ...productToAdd, quantity: 1 }];
+        });
     };
     
     const handleUpdateCartQuantity = (productId, newQuantity) => {
-        // This logic remains on the frontend
-        // ... (same as before)
+        const productInStock = products.find(p => p._id === productId);
+        if (newQuantity <= 0) {
+            handleRemoveFromCart(productId);
+            return;
+        }
+        if (newQuantity > productInStock.stock) {
+            setNotification(`Only ${productInStock.stock} items available.`);
+            setCartItems(prevItems => prevItems.map(item =>
+                item._id === productId ? { ...item, quantity: productInStock.stock } : item
+            ));
+            return;
+        }
+        setCartItems(prevItems => prevItems.map(item =>
+            item._id === productId ? { ...item, quantity: newQuantity } : item
+        ));
     };
 
     const handleRemoveFromCart = (productId) => {
-        // This logic remains on the frontend
-        // ... (same as before)
+        setCartItems(prevItems => prevItems.filter(item => item._id !== productId));
+        setNotification('Item removed from cart.');
     };
 
     const handleCheckout = (total) => {
@@ -167,7 +220,8 @@ function App() {
                 body: JSON.stringify(orderData),
             });
             if (!response.ok) throw new Error('Failed to place order');
-            
+            const newOrder = await response.json();
+            setOrders(prev => [newOrder, ...prev]);
             setNotification(`Order placed successfully!`);
             setCartItems([]);
             setIsCheckoutModalOpen(false);
