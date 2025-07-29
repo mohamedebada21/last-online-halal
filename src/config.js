@@ -1,0 +1,1 @@
+export const TAX_RATE = 0.08875; // Example NY Sales Tax: 8.875%
