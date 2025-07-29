@@ -149,6 +149,7 @@ function App() {
 
     const handleSaveProduct = async (productData) => {
         try {
+            // This is a simplified version. A real app would have separate POST/PUT routes.
             const response = await fetch(`${API_URL}/products`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -156,7 +157,14 @@ function App() {
             });
             if (!response.ok) throw new Error('Failed to save product');
             const newProduct = await response.json();
-            setProducts(prev => [newProduct, ...prev.filter(p => p._id !== newProduct._id)]);
+            // Add or update the product in the local state
+            setProducts(prev => {
+                const exists = prev.find(p => p._id === newProduct._id);
+                if (exists) {
+                    return prev.map(p => p._id === newProduct._id ? newProduct : p);
+                }
+                return [newProduct, ...prev];
+            });
             setNotification('Product saved successfully!');
         } catch (error) {
             setNotification(error.message);
@@ -168,6 +176,13 @@ function App() {
         const taxAmount = cartItems.reduce((sum, item) => item.taxable ? sum + (item.price * item.quantity * TAX_RATE) : sum, 0);
         const total = subtotal + taxAmount;
         // This is a placeholder. A real app would send this to a POST /api/orders endpoint.
+        const newOrder = {
+            id: Date.now(),
+            items: cartItems,
+            totalAmount: total,
+            // ...other details
+        };
+        setOrders(prev => [newOrder, ...prev]);
         setNotification(`Order placed for $${total.toFixed(2)}. (Backend not fully implemented)`);
         setCartItems([]);
         setIsCheckoutModalOpen(false);
