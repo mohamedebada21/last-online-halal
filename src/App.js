@@ -24,10 +24,12 @@ function App() {
     const [checkoutTotal, setCheckoutTotal] = useState(0);
     const [notification, setNotification] = useState('');
 
+    // Fetch initial products from the backend when the app loads
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 const response = await fetch(`${API_URL}/products`);
+                if (!response.ok) throw new Error('Network response was not ok');
                 const data = await response.json();
                 setProducts(data);
             } catch (error) {
@@ -134,6 +136,8 @@ function App() {
 
     const handleLogin = async ({ email, password }) => {
         setNotification('Login functionality requires a full auth backend with JWT.');
+        // In a real app, you would fetch from /api/auth/login, get a token,
+        // save it, and then set the user.
         return false; 
     };
 
@@ -144,7 +148,6 @@ function App() {
     };
 
     const handleSaveProduct = async (productData) => {
-        // This is a simplified version. A real app would have separate POST/PUT routes.
         try {
             const response = await fetch(`${API_URL}/products`, {
                 method: 'POST',
@@ -159,13 +162,25 @@ function App() {
             setNotification(error.message);
         }
     };
-    
+
     const handlePlaceOrder = () => {
-        setNotification('Placing orders requires a full backend implementation.');
+        const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const taxAmount = cartItems.reduce((sum, item) => item.taxable ? sum + (item.price * item.quantity * TAX_RATE) : sum, 0);
+        const total = subtotal + taxAmount;
+        // This is a placeholder. A real app would send this to a POST /api/orders endpoint.
+        setNotification(`Order placed for $${total.toFixed(2)}. (Backend not fully implemented)`);
+        setCartItems([]);
+        setIsCheckoutModalOpen(false);
+        setView('shop');
     };
     
-    const handleDeleteProduct = () => {};
-    const handleUpdateOrderStatus = () => {};
+    const handleDeleteProduct = () => {
+        setNotification('Delete functionality requires a DELETE /api/products/:id endpoint.');
+    };
+    
+    const handleUpdateOrderStatus = () => {
+        setNotification('Order status updates require a PUT /api/orders/:id endpoint.');
+    };
 
     const renderView = () => {
         switch (view) {
