@@ -40,10 +40,10 @@ function App() {
         fetchProducts();
     }, []);
 
-    // Fetch orders when a user logs in
+    // Fetch orders when a user logs in OR when the view changes to admin/account
     useEffect(() => {
         const fetchOrders = async () => {
-            if (currentUser) {
+            if (currentUser && (view === 'account' || view === 'admin')) {
                 try {
                     // If the user is an admin, fetch all orders. Otherwise, fetch only their own.
                     const endpoint = currentUser.isAdmin ? `${API_URL}/orders` : `${API_URL}/orders/${currentUser.id}`;
@@ -55,13 +55,13 @@ function App() {
                     console.error("Failed to fetch orders:", error);
                     setNotification(error.message);
                 }
-            } else {
+            } else if (!currentUser) {
                 setOrders([]); // Clear orders on logout
             }
         };
 
         fetchOrders();
-    }, [currentUser]); // Re-run this effect when the user logs in or out
+    }, [currentUser, view]); // Re-run this effect when the user logs in/out OR navigates
 
     useEffect(() => {
         if (notification) {
@@ -222,7 +222,8 @@ function App() {
             });
             if (!response.ok) throw new Error('Failed to place order');
             const newOrder = await response.json();
-            setOrders(prev => [newOrder, ...prev]);
+            // This will be seen by the customer immediately, but admin will need to refresh
+            setOrders(prev => [newOrder, ...prev]); 
             setNotification(`Order placed successfully!`);
             setCartItems([]);
             setIsCheckoutModalOpen(false);
@@ -273,4 +274,4 @@ function App() {
     );
 }
 
-export default App;
+export default App;ß
