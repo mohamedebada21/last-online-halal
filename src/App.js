@@ -1,4 +1,3 @@
-// src/App.js
 import React, { useState, useEffect, useCallback } from 'react';
 import { TAX_RATE } from './config';
 import Header from './components/layout/Header';
@@ -59,12 +58,12 @@ function App() {
         }
     }, [currentUser]); // Dependency on currentUser
 
-    // Effect to fetch orders when the user logs in
+    // Effect to fetch orders when the user logs in OR when the view changes to admin/account
     useEffect(() => {
-        if (currentUser) {
+        if (currentUser && (view === 'account' || view === 'admin')) {
             fetchOrders();
         }
-    }, [currentUser, fetchOrders]);
+    }, [currentUser, view, fetchOrders]);
 
     useEffect(() => {
         if (notification) {
@@ -84,15 +83,48 @@ function App() {
     };
 
     const handleAddToCart = (productToAdd) => {
-        // ... (logic is unchanged)
+        const productInStock = products.find(p => p._id === productToAdd._id);
+        if (!productInStock || productInStock.stock <= 0) {
+            setNotification('This item is out of stock.');
+            return;
+        }
+        setCartItems(prevItems => {
+            const itemInCart = prevItems.find(item => item._id === productToAdd._id);
+            if (itemInCart) {
+                if (itemInCart.quantity >= productInStock.stock) {
+                    setNotification('Cannot add more than available stock.');
+                    return prevItems;
+                }
+                return prevItems.map(item =>
+                    item._id === productToAdd._id ? { ...item, quantity: item.quantity + 1 } : item
+                );
+            }
+            setNotification(`${productToAdd.name} added to cart!`);
+            return [...prevItems, { ...productToAdd, quantity: 1 }];
+        });
     };
     
     const handleUpdateCartQuantity = (productId, newQuantity) => {
-        // ... (logic is unchanged)
+        const productInStock = products.find(p => p._id === productId);
+        if (newQuantity <= 0) {
+            handleRemoveFromCart(productId);
+            return;
+        }
+        if (newQuantity > productInStock.stock) {
+            setNotification(`Only ${productInStock.stock} items available.`);
+            setCartItems(prevItems => prevItems.map(item =>
+                item._id === productId ? { ...item, quantity: productInStock.stock } : item
+            ));
+            return;
+        }
+        setCartItems(prevItems => prevItems.map(item =>
+            item._id === productId ? { ...item, quantity: newQuantity } : item
+        ));
     };
 
     const handleRemoveFromCart = (productId) => {
-        // ... (logic is unchanged)
+        setCartItems(prevItems => prevItems.filter(item => item._id !== productId));
+        setNotification('Item removed from cart.');
     };
 
     const handleCheckout = (total) => {
@@ -108,7 +140,23 @@ function App() {
     };
 
     const handleRegister = async ({ name, email, password }) => {
-        // ... (logic is unchanged)
+        try {
+            const response = await fetch(`${API_URL}/users/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password }),
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.msg || 'Registration failed');
+            }
+            setNotification('Registration successful! Please log in.');
+            setView('login');
+            return true;
+        } catch (error) {
+            setNotification(error.message);
+            return false;
+        }
     };
 
     const handleLogin = async ({ email, password }) => {
@@ -142,7 +190,19 @@ function App() {
     };
 
     const handleSaveProduct = async (productData) => {
-        // ... (logic is unchanged)
+        try {
+            const response = await fetch(`${API_URL}/products`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(productData),
+            });
+            if (!response.ok) throw new Error('Failed to save product');
+            const newProduct = await response.json();
+            setProducts(prev => [newProduct, ...prev.filter(p => p._id !== newProduct._id)]);
+            setNotification('Product saved successfully!');
+        } catch (error) {
+            setNotification(error.message);
+        }
     };
 
     const handlePlaceOrder = async () => {
