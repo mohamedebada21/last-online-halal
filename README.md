@@ -1,15 +1,15 @@
 # HalalFresh Grocery Store 🍉
 
-A modern, mobile-friendly e-commerce platform for selling halal grocery items, built with React and Tailwind CSS.
+A modern, mobile-friendly e-commerce platform for selling halal grocery items, built with React and Tailwind CSS. This project is the frontend application and is designed to connect to a separate backend server for data persistence and secure operations.
 
 ## Features
 
 -   **User Accounts:** Customers can register, log in, and view their order history.
--   **Product Catalog:** Browse a list of available grocery items.
+-   **Product Catalog:** Browse a list of available grocery items fetched from a backend API.
 -   **Product Detail View:** Click on a product to see more details.
 -   **Shopping Cart:** Add/remove items and update quantities.
 -   **Tax Calculation:** Automatically calculates taxes for taxable items at checkout.
--   **Admin Dashboard:** A secure area to manage products, orders, and inventory, accessible via admin user login.
+-   **Admin Dashboard:** A secure area for admin users to manage products and view all customer orders.
 
 ## Tech Stack
 
@@ -23,6 +23,7 @@ A modern, mobile-friendly e-commerce platform for selling halal grocery items, b
 
 -   Node.js (v16 or later)
 -   npm
+-   A running instance of the `halal-fresh-backend` server.
 
 ### Installation & Setup
 
@@ -51,4 +52,3 @@ To start the development server, run:
 
 ```sh
 npm start
-

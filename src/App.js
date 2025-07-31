@@ -45,7 +45,6 @@ function App() {
         const fetchOrders = async () => {
             if (currentUser && (view === 'account' || view === 'admin')) {
                 try {
-                    // If the user is an admin, fetch all orders. Otherwise, fetch only their own.
                     const endpoint = currentUser.isAdmin ? `${API_URL}/orders` : `${API_URL}/orders/${currentUser.id}`;
                     const response = await fetch(endpoint);
                     if (!response.ok) throw new Error('Could not fetch orders.');
@@ -222,7 +221,6 @@ function App() {
             });
             if (!response.ok) throw new Error('Failed to place order');
             const newOrder = await response.json();
-            // This will be seen by the customer immediately, but admin will need to refresh
             setOrders(prev => [newOrder, ...prev]); 
             setNotification(`Order placed successfully!`);
             setCartItems([]);
@@ -265,7 +263,7 @@ function App() {
 
     return (
         <div className="text-gray-800">
-            <Header onNavigate={handleNavigate} cartCount={cartItems.length} currentUser={currentUser} onLogout={handleLogout} />
+            <Header onNavigate={handleNavigate} cartCount={cartItems.reduce((sum, item) => sum + item.quantity, 0)} currentUser={currentUser} onLogout={handleLogout} />
             {notification && <div className="fixed top-20 right-5 bg-green-600 text-white py-3 px-6 rounded-lg shadow-2xl z-50 animate-fade-in-out">{notification}</div>}
             <main className="container mx-auto p-4 sm:p-6 lg:p-8">{renderView()}</main>
             {isCheckoutModalOpen && <CheckoutModal onClose={() => setIsCheckoutModalOpen(false)} onPlaceOrder={handlePlaceOrder} total={checkoutTotal} />}
