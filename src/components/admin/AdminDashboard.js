@@ -3,12 +3,12 @@ import OrderManagement from './OrderManagement';
 import InventoryManagement from './InventoryManagement';
 import ProductManagement from './ProductManagement';
 
-const AdminDashboard = ({ products, orders, onSaveProduct, onDeleteProduct, onUpdateOrderStatus, onLogout }) => {
+const AdminDashboard = ({ products, orders, onSaveProduct, onDeleteProduct, onUpdateOrderStatus, onLogout, onFetchOrders }) => {
     const [activeTab, setActiveTab] = useState('products');
 
     const renderContent = () => {
         switch (activeTab) {
-            case 'orders': return <OrderManagement orders={orders} onUpdateOrderStatus={onUpdateOrderStatus} />;
+            case 'orders': return <OrderManagement orders={orders} onUpdateOrderStatus={onUpdateOrderStatus} onFetchOrders={onFetchOrders} />;
             case 'inventory': return <InventoryManagement products={products} />;
             case 'products': default: return <ProductManagement products={products} onSaveProduct={onSaveProduct} onDeleteProduct={onDeleteProduct} />;
         }
