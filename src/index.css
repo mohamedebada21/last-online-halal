@@ -4,6 +4,8 @@
 
 body {
   font-family: 'Inter', sans-serif;
+  background-color: #F0FFF4; /* A light honeydew green as a fallback */
+  background-image: linear-gradient(to top, #fff1f2 0%, #f0fff4 100%);
 }
 
 @layer utilities {
