@@ -1,7 +1,7 @@
 import React from 'react';
 
 const AccountPage = ({ currentUser, orders }) => {
-    const userOrders = orders.filter(order => order.userId === currentUser.id).sort((a, b) => b.id - a.id);
+    const userOrders = orders.filter(order => order.userId === currentUser.id).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     return (
         <div className="max-w-4xl mx-auto">
@@ -16,11 +16,11 @@ const AccountPage = ({ currentUser, orders }) => {
                     ) : (
                         <div className="space-y-4">
                             {userOrders.map(order => (
-                                <div key={order.id} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                <div key={order._id} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                                     <div className="flex justify-between items-start">
                                         <div>
-                                            <p className="font-bold text-md text-gray-900">Order #{order.orderId}</p>
-                                            <p className="text-sm text-gray-500">Placed on: {order.deliveryDate.toLocaleDateString()}</p>
+                                            <p className="font-bold text-md text-gray-900">Order #{order._id.slice(-6).toUpperCase()}</p>
+                                            <p className="text-sm text-gray-500">Placed on: {new Date(order.createdAt).toLocaleDateString()}</p>
                                         </div>
                                         <div className="text-right flex-shrink-0">
                                             <p className="font-bold text-lg text-green-600">${order.totalAmount.toFixed(2)}</p>
@@ -30,7 +30,7 @@ const AccountPage = ({ currentUser, orders }) => {
                                     <div className="mt-4 border-t pt-3">
                                         <ul className="text-sm space-y-1 text-gray-600">
                                             {order.items.map(item => (
-                                                <li key={item.productId}><span className="font-semibold">{item.quantity}x</span> {item.name}</li>
+                                                <li key={item._id}><span className="font-semibold">{item.quantity}x</span> {item.name}</li>
                                             ))}
                                         </ul>
                                     </div>
