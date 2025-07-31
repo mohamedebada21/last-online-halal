@@ -10,7 +10,7 @@ import LoginPage from './components/auth/LoginPage';
 import RegisterPage from './components/auth/RegisterPage';
 import AccountPage from './components/account/AccountPage';
 
-const API_URL = 'http://localhost:5001/api'; // Your backend server URL
+const API_URL = 'https://halal-fresh-backend.onrender.com/api'; // Your backend server URL
 
 function App() {
     const [view, setView] = useState('shop');
