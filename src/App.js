@@ -58,7 +58,7 @@ function App() {
         }
     }, [currentUser]); // Dependency on currentUser
 
-    // Effect to fetch orders when the view changes to a page that needs them
+    // Effect to fetch orders when the user logs in OR when the view changes to admin/account
     useEffect(() => {
         if (currentUser && (view === 'account' || view === 'admin')) {
             fetchOrders();
