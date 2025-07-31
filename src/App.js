@@ -241,8 +241,22 @@ function App() {
         setNotification('Delete functionality requires a DELETE /api/products/:id endpoint.');
     };
     
-    const handleUpdateOrderStatus = () => {
-        setNotification('Order status updates require a PUT /api/orders/:id endpoint.');
+    const handleUpdateOrderStatus = async (orderId, newStatus) => {
+        try {
+            const response = await fetch(`${API_URL}/orders/${orderId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderStatus: newStatus }),
+            });
+            if (!response.ok) throw new Error('Failed to update order status');
+            const updatedOrder = await response.json();
+            setOrders(prevOrders => 
+                prevOrders.map(o => o._id === updatedOrder._id ? updatedOrder : o)
+            );
+            setNotification(`Order #${updatedOrder._id.slice(-6).toUpperCase()} marked as ${newStatus}.`);
+        } catch (error) {
+            setNotification(error.message);
+        }
     };
 
     const renderView = () => {
