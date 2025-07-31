@@ -6,7 +6,7 @@ const Header = ({ onNavigate, cartCount, currentUser, onLogout }) => (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
                 <div className="text-3xl font-bold text-gray-800 cursor-pointer" onClick={() => onNavigate('shop')}>
-                    Halal<span className="text-green-600">Fresh</span><span className="text-red-500">🍉</span>
+                    Halal<span className="text-green-600">Online Store</span><span className="text-red-500">🍉</span>
                 </div>
                 <nav className="flex items-center space-x-2 sm:space-x-4">
                     <button onClick={() => onNavigate('shop')} className="flex items-center space-x-2 text-gray-500 hover:text-green-600 font-semibold transition-colors px-3 py-2 rounded-lg hover:bg-green-50">
