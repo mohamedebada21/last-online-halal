@@ -58,7 +58,7 @@ function App() {
         }
     }, [currentUser]); // Dependency on currentUser
 
-    // Effect to fetch orders when the user logs in OR when the view changes to admin/account
+    // Effect to fetch orders when the view changes to a page that needs them
     useEffect(() => {
         if (currentUser && (view === 'account' || view === 'admin')) {
             fetchOrders();
@@ -228,8 +228,8 @@ function App() {
             setCartItems([]);
             setIsCheckoutModalOpen(false);
             
-            // After placing the order, simply navigate to the account page.
-            // The useEffect hook will automatically fetch the latest orders.
+            // Navigate to the account page. The useEffect hook will then
+            // automatically fetch the latest orders, including the one just placed.
             setView('account');
 
         } catch (error) {
