@@ -228,8 +228,8 @@ function App() {
             setCartItems([]);
             setIsCheckoutModalOpen(false);
             
-            // After placing the order, fetch the latest orders and navigate to the account page
-            await fetchOrders();
+            // After placing the order, simply navigate to the account page.
+            // The useEffect hook will automatically fetch the latest orders.
             setView('account');
 
         } catch (error) {
