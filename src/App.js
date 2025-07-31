@@ -58,7 +58,7 @@ function App() {
         }
     }, [currentUser]); // Dependency on currentUser
 
-    // Effect to fetch orders when the user logs in OR when the view changes to admin/account
+    // Effect to fetch orders when the view changes to a page that needs them
     useEffect(() => {
         if (currentUser && (view === 'account' || view === 'admin')) {
             fetchOrders();
@@ -214,6 +214,8 @@ function App() {
             userId: currentUser.id,
             items: cartItems.map(item => ({ productId: item._id, name: item.name, quantity: item.quantity, price: item.price })),
             totalAmount: total,
+            subtotal: subtotal,
+            taxAmount: taxAmount,
         };
 
         try {
