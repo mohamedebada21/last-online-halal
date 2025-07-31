@@ -9,6 +9,7 @@ import AdminDashboard from './components/admin/AdminDashboard';
 import LoginPage from './components/auth/LoginPage';
 import RegisterPage from './components/auth/RegisterPage';
 import AccountPage from './components/account/AccountPage';
+import Icon from './components/ui/Icon';
 
 const API_URL = 'https://halal-fresh-backend.onrender.com/api'; // Your backend server URL
 
@@ -51,7 +52,6 @@ function App() {
             if (!response.ok) throw new Error('Could not fetch orders.');
             const data = await response.json();
             setOrders(data);
-            setNotification('Orders refreshed!');
         } catch (error) {
             console.error("Failed to fetch orders:", error);
             setNotification(error.message);
@@ -289,7 +289,19 @@ function App() {
             {notification && <div className="fixed top-20 right-5 bg-green-600 text-white py-3 px-6 rounded-lg shadow-2xl z-50 animate-fade-in-out">{notification}</div>}
             <main className="container mx-auto p-4 sm:p-6 lg:p-8">{renderView()}</main>
             {isCheckoutModalOpen && <CheckoutModal onClose={() => setIsCheckoutModalOpen(false)} onPlaceOrder={handlePlaceOrder} total={checkoutTotal} />}
-            <footer className="text-center py-10 mt-16 border-t border-gray-200"><p className="text-gray-500">&copy; {new Date().getFullYear()} HalalFresh. Built with 💚.</p></footer>
+            <footer className="text-center py-10 mt-16 border-t border-gray-200">
+                <div className="flex justify-center items-center space-x-6 mb-4">
+                    <a href="tel:+16462297473" className="flex items-center space-x-2 text-gray-500 hover:text-green-600 transition">
+                        <Icon name="phone" className="w-5 h-5" />
+                        <span>+1 (646) 229-7473</span>
+                    </a>
+                    <a href="mailto:halalonlinestore101@gmail.com" className="flex items-center space-x-2 text-gray-500 hover:text-green-600 transition">
+                        <Icon name="mail" className="w-5 h-5" />
+                        <span>halalonlinestore101@gmail.com</span>
+                    </a>
+                </div>
+                <p className="text-gray-500">&copy; {new Date().getFullYear()} HalalFresh. Built with 💚.</p>
+            </footer>
         </div>
     );
 }
